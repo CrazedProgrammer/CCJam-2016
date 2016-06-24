@@ -16,6 +16,18 @@ local function quit()
 	term.setCursorPos(1, 1)
 end
 
+local function continue()
+	local timer = os.startTimer(0)
+	while true do
+		local e = {os.pullEvent()}
+		if e[1] == "timer" and e[2] == timer then
+			return false
+		elseif e[1] == "key" then
+			return true
+		end
+	end
+end
+
 -- Save data functions
 
 local savedata = { }
@@ -131,30 +143,48 @@ local img_madeby = "000 00                      00000\n0  0  0         0        
 
 -- Actual program ---------------------------------------------------------------------------------------------
 
+-- Wavey logo shit
 
--- Wavey logo display
+local skipintro = false
 
-for i = 1, 1000 do
-	clearScreen(colors.black)
+for i = 1, 110 do
+	clearScreen(colors.blue)
 	for j = 0, 101 do
-		local y = math.floor(math.sin(i / 10 + j / 17) * 7 + 0.5) + 43
+		local y = math.floor(math.sin(i / 7 + j / 17) * 7 + 0.5) + 43
+		if i > 60 then
+			y = y - (i - 60) * 3
+		end
+		if y < 0 then y = 0 end 
 		for k = y, 56 do
-			buffer[k * 102 + j + 1] = colors.lightGray
+			buffer[k * 102 + j + 1] = colors.cyan
 		end
 	end
 	drawImage(43, 23, img_crazed)
 	drawImage(32, 11, img_madeby)
+	if i >= 75 then
+		local gray = math.floor(56 - (i - 75) * 3.5)
+		local black = math.floor(56 - (i - 90) * 3.5)
+		if gray < 0 then gray = 0 end
+		if black < 0 then black = 0 end
+		for j = 0, 101 do
+			for k = gray, 56 do
+				buffer[k * 102 + j + 1] = colors.gray
+			end
+			if black < 57 then
+				for k = black, 56 do
+					buffer[k * 102 + j + 1] = colors.black
+				end
+			end
+		end
+	end
+	
 	if i < 19 then
 		term.scroll(-1)
 		renderScreen(1, i)
 	else
 		renderScreen()
 	end
-	os.sleep(0)
+	if continue() then return end
 end
-
-
-
-os.pullEvent("key")
 
 quit()
