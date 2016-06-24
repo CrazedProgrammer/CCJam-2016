@@ -1,0 +1,16 @@
+
+			3-Games Pack Volume 1
+			Design Specification
+
+
+- Contains 3 games
+- Games will range from Arcade to Puzzle games
+- Only compatible with advanced computers and command computers
+- Command computers will have sound capabilities
+
+Ideas for games to include:
+
+Dr. Mario
+Centipede
+Arkanoid
+Yoshi

@@ -1,0 +1,160 @@
+-- 3 Game Pak by CrazedProgrammer
+-- Crazedprogrammer
+
+local screenwidth, screenheight = term.getSize()
+if not (_HOST and screenwidth == 51 and (screenheight == 19 or screenheight == 18) and term.isColor()) then
+	term.setTextColor(colors.red)
+	print("This program is not compatible with your current setup.\nRequirements:\n- ComputerCraft version 1.76 or newer\n- Runned on an Advanced Computer or a Command Computer (for sound support)\n- No more than 1 multishell instance")
+	return
+end
+
+-- Program functions
+
+local function quit()
+	term.setBackgroundColor(colors.black)
+	term.clear()
+	term.setCursorPos(1, 1)
+end
+
+-- Save data functions
+
+local savedata = { }
+local savedatapath = fs.getDir(shell.getRunningProgram()).."/3gpsave.sav"
+
+local function save()
+	local handle = fs.open(savedatapath, "w")
+	if not handle then return end
+	handle.write(textutils.serialize(savedata))
+	handle.close()
+end
+
+local function loadSave()
+	local handle = fs.open(savedatapath, "r")
+	if not handle then
+		save()
+		return
+	end
+	local data = textutils.unserialize(handle.readAll())
+	handle.close()
+	local legit = true
+	if type(data) ~= "table" then
+		legit = false
+	end
+	if not legit then
+		fs.delete(savedatapath)
+		save()
+	else
+		savedata = data
+	end
+end
+
+-- Graphics functions
+
+local colorhex, smallchar = { }, { }
+for i = 0, 15 do
+	colorhex[2 ^ i] = string.format("%01x", i)
+end
+for i = 1, 32 do
+	smallchar[i] = string.char(127 + i)
+end
+local buffer = { }
+
+local function clearScreen(color)
+	for i = 1, 102 * 57 do
+		buffer[i] = color
+	end
+end
+
+local function renderScreen(beginline, endline)
+	beginline, endline = beginline or 1, endline or 19
+	local commands, charline, mainline, subline, index, sub, char, c1, c2, c3, c4, c5, c6 = { }, { }, { }, { }, nil, 32768
+	for j = 0, 18 do		
+		for i = 0, 50 do
+			index = (j * 3) * 102 + (i * 2)
+			c1, c2, c3, c4, c5, c6 = buffer[index + 1], buffer[index + 2], buffer[index + 103], buffer[index + 104], buffer[index + 205], buffer[index + 206]
+			char = 0
+			if c1 ~= c6 then
+				sub = c1
+				char = 1
+			end
+			if c2 ~= c6 then
+				sub = c2
+				char = char + 2
+			end
+			if c3 ~= c6 then
+				sub = c3
+				char = char + 4
+			end
+			if c4 ~= c6 then
+				sub = c4
+				char = char + 8
+			end
+			if c5 ~= c6 then
+				sub = c5
+				char = char + 16
+			end
+			charline[i + 1] = smallchar[char + 1]
+			mainline[i + 1] = colorhex[c6]
+			subline[i + 1] = colorhex[sub]
+		end
+		commands[#commands + 1] = table.concat(charline)
+		commands[#commands + 1] = table.concat(subline)
+		commands[#commands + 1] = table.concat(mainline)
+	end
+	for i = beginline, endline do
+		term.setCursorPos(1, i)
+		term.blit(commands[i * 3 - 2], commands[i * 3 - 1], commands[i * 3])
+	end
+end
+
+local function drawImage(x, y, image)
+	local dx, dy = x, y
+	for i = 1, #image do
+		local c = image:sub(i, i)
+		if c == "\n" then
+			dy = dy + 1
+			dx = x
+		elseif c ~= "\r" then
+			local number = tonumber(c, 16)
+			if number then
+				buffer[dy * 102 + dx + 1] = 2 ^ number
+			end
+			dx = dx + 1
+		end
+	end
+end
+
+-- Assets
+
+local img_crazed = "8888888888888888\n8f000f000fff00f7\n80ffff0ff0f0ff07\n80ffff000ff00007\n8f000f0ff0f0ff07\n8ffffffffffffff7\n80000f0000f000f7\n8ff0ff000ff0ff07\n8f0fff0ffff0ff07\n80000f0000f000f7\n8777777777777777\n       77\n      7777\n  888888888888\n  8777778778b8\n  888888888888"
+local img_madeby = "000 00                      00000\n0  0  0         0           0    0\n0  0  0         0           0    0\n0  0  0  000  000  000      00000  0   0\n0  0  0 0  0 0  0 00000     0    0  0 0\n0  0  0 0  0 0  0 0         0    0   0\n0     0  000  000  000      00000    0\n                                    0\n                                   0\n"
+
+-- Actual program ---------------------------------------------------------------------------------------------
+
+
+-- Wavey logo display
+
+for i = 1, 1000 do
+	clearScreen(colors.black)
+	for j = 0, 101 do
+		local y = math.floor(math.sin(i / 10 + j / 17) * 7 + 0.5) + 43
+		for k = y, 56 do
+			buffer[k * 102 + j + 1] = colors.lightGray
+		end
+	end
+	drawImage(43, 23, img_crazed)
+	drawImage(32, 11, img_madeby)
+	if i < 19 then
+		term.scroll(-1)
+		renderScreen(1, i)
+	else
+		renderScreen()
+	end
+	os.sleep(0)
+end
+
+
+
+os.pullEvent("key")
+
+quit()
