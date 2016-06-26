@@ -8,25 +8,10 @@ if not (_HOST and screenwidth == 51 and (screenheight == 19 or screenheight == 1
 	return
 end
 
--- Program functions
+-- Assets
 
-local function quit()
-	term.setBackgroundColor(colors.black)
-	term.clear()
-	term.setCursorPos(1, 1)
-end
-
-local function continue()
-	local timer = os.startTimer(0)
-	while true do
-		local e = {os.pullEvent()}
-		if e[1] == "timer" and e[2] == timer then
-			return false
-		elseif e[1] == "key" then
-			return true
-		end
-	end
-end
+local img_crazed = "8888888888888888\n8f000f000fff00f7\n80ffff0ff0f0ff07\n80ffff000ff00007\n8f000f0ff0f0ff07\n8ffffffffffffff7\n80000f0000f000f7\n8ff0ff000ff0ff07\n8f0fff0ffff0ff07\n80000f0000f000f7\n8777777777777777\n       77\n      7777\n  888888888888\n  8777778778b8\n  888888888888"
+local img_madeby = "000 00                      00000\n0  0  0         0           0    0\n0  0  0         0           0    0\n0  0  0  000  000  000      00000  0   0\n0  0  0 0  0 0  0 00000     0    0  0 0\n0  0  0 0  0 0  0 0         0    0   0\n0     0  000  000  000      00000    0\n                                    0\n                                   0\n"
 
 -- Save data functions
 
@@ -77,8 +62,9 @@ local function clearScreen(color)
 	end
 end
 
-local function renderScreen(beginline, endline)
-	beginline, endline = beginline or 1, endline or 19
+local screenendline = 1, 19
+
+local function renderScreen()
 	local commands, charline, mainline, subline, index, sub, char, c1, c2, c3, c4, c5, c6 = { }, { }, { }, { }, nil, 32768
 	for j = 0, 18 do		
 		for i = 0, 50 do
@@ -113,7 +99,7 @@ local function renderScreen(beginline, endline)
 		commands[#commands + 1] = table.concat(subline)
 		commands[#commands + 1] = table.concat(mainline)
 	end
-	for i = beginline, endline do
+	for i = 1, screenendline do
 		term.setCursorPos(1, i)
 		term.blit(commands[i * 3 - 2], commands[i * 3 - 1], commands[i * 3])
 	end
@@ -136,18 +122,13 @@ local function drawImage(x, y, image)
 	end
 end
 
--- Assets
+-- Intro
 
-local img_crazed = "8888888888888888\n8f000f000fff00f7\n80ffff0ff0f0ff07\n80ffff000ff00007\n8f000f0ff0f0ff07\n8ffffffffffffff7\n80000f0000f000f7\n8ff0ff000ff0ff07\n8f0fff0ffff0ff07\n80000f0000f000f7\n8777777777777777\n       77\n      7777\n  888888888888\n  8777778778b8\n  888888888888"
-local img_madeby = "000 00                      00000\n0  0  0         0           0    0\n0  0  0         0           0    0\n0  0  0  000  000  000      00000  0   0\n0  0  0 0  0 0  0 00000     0    0  0 0\n0  0  0 0  0 0  0 0         0    0   0\n0     0  000  000  000      00000    0\n                                    0\n                                   0\n"
+local introstep = 0
 
--- Actual program ---------------------------------------------------------------------------------------------
-
--- Wavey logo shit
-
-local skipintro = false
-
-for i = 1, 110 do
+local function updateIntro()
+	introstep = introstep + 1
+	local i = introstep
 	clearScreen(colors.blue)
 	for j = 0, 101 do
 		local y = math.floor(math.sin(i / 7 + j / 17) * 7 + 0.5) + 43
@@ -178,13 +159,56 @@ for i = 1, 110 do
 		end
 	end
 	
-	if i < 19 then
+	if i <= 19 then
 		term.scroll(-1)
-		renderScreen(1, i)
-	else
-		renderScreen()
+		screenendline = i
 	end
-	if continue() then return end
+	if i == 110 then
+		mode = 2
+	end
 end
 
-quit()
+-- Main program functions
+
+local mode = 1
+local quit = false
+
+local function initProgram()
+	clearScreen(colors.black)
+	loadSave()
+end
+
+local function runProgram()
+	local timer = os.startTimer(0.05)
+	while not quit do 
+		local e = {os.pullEventRaw()}
+		if e[1] == "timer" and e[2] == timer then
+			timer = os.startTimer(0.05)
+			if mode == 1 then
+				updateIntro()
+			end
+			renderScreen()
+		elseif e[1] == "key" then
+			if mode == 1 then
+				mode = 2
+			end
+		elseif e[1] == "terminate" then
+			quit = true
+		end
+	end
+end
+
+local function quitProgram()
+	save()
+	term.setBackgroundColor(colors.black)
+	term.clear()
+	term.setCursorPos(1, 1)
+end
+
+
+
+
+-------------------------------------
+initProgram()
+runProgram()
+quitProgram()
