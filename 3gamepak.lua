@@ -2,6 +2,7 @@
 -- Crazedprogrammer
 
 local screenwidth, screenheight = term.getSize()
+local screenoffset = 19 - screenheight
 if not (_HOST and screenwidth == 51 and (screenheight == 19 or screenheight == 18) and term.isColor()) then
 	term.setTextColor(colors.red)
 	print("This program is not compatible with your current setup.\nRequirements:\n- ComputerCraft version 1.76 or newer\n- Runned on an Advanced Computer or a Command Computer (for sound support)\n- No more than 1 multishell instance")
@@ -12,6 +13,15 @@ end
 
 local img_crazed = "8888888888888888\n8f000f000fff00f7\n80ffff0ff0f0ff07\n80ffff000ff00007\n8f000f0ff0f0ff07\n8ffffffffffffff7\n80000f0000f000f7\n8ff0ff000ff0ff07\n8f0fff0ffff0ff07\n80000f0000f000f7\n8777777777777777\n       77\n      7777\n  888888888888\n  8777778778b8\n  888888888888"
 local img_madeby = "000 00                      00000\n0  0  0         0           0    0\n0  0  0         0           0    0\n0  0  0  000  000  000      00000  0   0\n0  0  0 0  0 0  0 00000     0    0  0 0\n0  0  0 0  0 0  0 0         0    0   0\n0     0  000  000  000      00000    0\n                                    0\n                                   0\n"
+local img_title1 = "1111111111\n1111111111\n       111\n     1111\n   1111\n 1111\n1111111111\n1111111111\n       111\n     1111\n    1111\n  1111\n 1111\n111\n11\n"
+local img_title2 = "  00000\n 0000000\n000    0\n00        00000   00 00 000    0000\n00  0000  000000  0000000000  000000\n00  0000      00  00  00  00  00  00\n00    00    0000  00  00  00  000000\n000   00  00  00  00  00  00  00\n 0000000  000000  00  00  00  000000\n  00000    00000  00  00  00   00000\n"
+local img_title3 = "000000           00\n0000000          00\n00   00          00\n00   00  00000   00   00\n00   00  000000  00  00\n0000000      00  00 00\n000000     0000  0000\n00       00  00  00 00\n00       000000  00  00\n00        00000  00   00\n"
+local img_help = "bbbbbbbbbbbbbbbbbb\nb0b0b000b0bbb00bbb\nb000b00bb0bbb0b0bb\nb0b0b0bbb0bbb00bbb\nb0b0b000b000b0bbbb\nbbbbbbbbbbbbbbbbbb\n"
+local img_exit = "eeeeeeeeeeeeeeeeee\ne000e0e0e000e000ee\ne00eee0eee0eee0eee\ne0eeee0eee0eee0eee\ne000e0e0e000ee0eee\neeeeeeeeeeeeeeeeee\n"
+
+-- Global variables
+local mode = 1
+local quit = false
 
 -- Save data functions
 
@@ -99,13 +109,13 @@ local function renderScreen()
 		commands[#commands + 1] = table.concat(subline)
 		commands[#commands + 1] = table.concat(mainline)
 	end
-	for i = 1, screenendline do
-		term.setCursorPos(1, i)
+	for i = 1 + screenoffset, screenendline do
+		term.setCursorPos(1, i - screenoffset)
 		term.blit(commands[i * 3 - 2], commands[i * 3 - 1], commands[i * 3])
 	end
 end
 
-local function drawImage(x, y, image)
+local function drawImage(image, x, y)
 	local dx, dy = x, y
 	for i = 1, #image do
 		local c = image:sub(i, i)
@@ -114,10 +124,32 @@ local function drawImage(x, y, image)
 			dx = x
 		elseif c ~= "\r" then
 			local number = tonumber(c, 16)
-			if number then
+			if number and dx >= 0 and dx < 102 and dy >= 0 and dy < 57 then
 				buffer[dy * 102 + dx + 1] = 2 ^ number
 			end
 			dx = dx + 1
+		end
+	end
+end
+
+local function drawRect(color, x, y, width, height)
+	if x < 0 then
+		width = width + x
+		x = 0
+	end
+	if y < 0 then
+		height = height + y
+		y = 0
+	end
+	if x + width > 102 then
+		width = 102 - x
+	end
+	if y + height > 57 then
+		height = 57 - y
+	end
+	for j = 0, height - 1 do
+		for i = 0, width - 1 do 
+			buffer[(j + y) * 102 + i + x + 1] = color
 		end
 	end
 end
@@ -129,49 +161,99 @@ local introstep = 0
 local function updateIntro()
 	introstep = introstep + 1
 	local i = introstep
-	clearScreen(colors.blue)
-	for j = 0, 101 do
-		local y = math.floor(math.sin(i / 7 + j / 17) * 7 + 0.5) + 43
-		if i > 60 then
-			y = y - (i - 60) * 3
-		end
-		if y < 0 then y = 0 end 
-		for k = y, 56 do
-			buffer[k * 102 + j + 1] = colors.cyan
-		end
-	end
-	drawImage(43, 23, img_crazed)
-	drawImage(32, 11, img_madeby)
-	if i >= 75 then
-		local gray = math.floor(56 - (i - 75) * 3.5)
-		local black = math.floor(56 - (i - 90) * 3.5)
-		if gray < 0 then gray = 0 end
-		if black < 0 then black = 0 end
+	if i <= 106 then
+		clearScreen(colors.blue)
 		for j = 0, 101 do
-			for k = gray, 56 do
-				buffer[k * 102 + j + 1] = colors.gray
+			local y = math.floor(math.sin(i / 7 + j / 17) * 7 + 0.5) + 43
+			if i > 60 then
+			y = y - (i - 60) * 3
 			end
-			if black < 57 then
-				for k = black, 56 do
-					buffer[k * 102 + j + 1] = colors.black
+			if y < 0 then y = 0 end 
+			for k = y, 56 do
+				buffer[k * 102 + j + 1] = 512
+			end
+		end
+		drawImage(img_crazed, 43, 23)
+		drawImage(img_madeby, 31, 11)
+		if i >= 75 then
+			local gray = math.floor(56 - (i - 75) * 3.5)
+			local black = math.floor(56 - (i - 90) * 3.5)
+			if gray < 0 then gray = 0 end
+			if black < 0 then black = 0 end
+			for j = 0, 101 do
+				for k = gray, 56 do
+					buffer[k * 102 + j + 1] = 128
+				end
+				if black < 57 then
+					for k = black, 56 do
+						buffer[k * 102 + j + 1] = 32768
+					end
 				end
 			end
 		end
-	end
-	
-	if i <= 19 then
-		term.scroll(-1)
-		screenendline = i
-	end
-	if i == 110 then
+		
+		if i <= 19 then
+			term.scroll(-1)
+			screenendline = i
+		end
+	elseif i >= 107 and i <= 112 then
+		local flash = {colors.gray, colors.white, colors.white, colors.lightGray, colors.gray, colors.gray}
+		clearScreen(flash[i - 106])
+	else
 		mode = 2
 	end
 end
 
--- Main program functions
+-- Main Menu
 
-local mode = 1
-local quit = false
+local function updateMainMenu()
+	clearScreen(colors.black)
+	drawImage(img_title1, 12, 3)
+	drawImage(img_title2, 26, 7)
+	drawImage(img_title3, 66, 7)
+	drawImage(img_help, 32, 51)
+	drawImage(img_exit, 52, 51)
+	drawRect(colors.gray, 2, 21, 30, 27)
+	drawRect(colors.gray, 36, 21, 30, 27)
+	drawRect(colors.gray, 70, 21, 30, 27)
+end
+
+local function clickMainMenu(x, y)
+	if y >= 18 and y <= 19 then
+		if x >= 17 and x <= 25 then
+			error("help")
+		elseif x >= 27 and x <= 35 then
+			quit = true
+		end
+	end
+end
+
+-- Event passers
+local function passTimer()
+	if mode == 1 then
+		updateIntro()
+	elseif mode == 2 then
+		updateMainMenu()
+	end
+end
+
+local function passKey(key, hold)
+	if mode == 1 then
+		mode = 2
+		screenendline = 19
+	end
+end
+
+local function passClick(button, x, y)
+	if mode == 1 then
+		mode = 2
+		screenendline = 19
+	elseif mode == 2 then
+		clickMainMenu(x, y)
+	end
+end
+
+-- Main program functions
 
 local function initProgram()
 	clearScreen(colors.black)
@@ -179,19 +261,17 @@ local function initProgram()
 end
 
 local function runProgram()
-	local timer = os.startTimer(0.05)
+	local timer = os.startTimer(0)
 	while not quit do 
 		local e = {os.pullEventRaw()}
 		if e[1] == "timer" and e[2] == timer then
-			timer = os.startTimer(0.05)
-			if mode == 1 then
-				updateIntro()
-			end
+			timer = os.startTimer(0)
+			passTimer()
 			renderScreen()
 		elseif e[1] == "key" then
-			if mode == 1 then
-				mode = 2
-			end
+			passKey(e[2], e[3])
+		elseif e[1] == "mouse_click" then
+			passClick(e[2], e[3], e[4] + screenoffset)
 		elseif e[1] == "terminate" then
 			quit = true
 		end
