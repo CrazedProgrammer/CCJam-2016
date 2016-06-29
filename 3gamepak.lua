@@ -21,7 +21,7 @@ local img = {
 ,	exit = "eeeeeeeeeeeeeeeeee\ne000e0e0e000e000ee\ne00eee0eee0eee0eee\ne0eeee0eee0eee0eee\ne000e0e0e000ee0eee\neeeeeeeeeeeeeeeeee\n"
 ,	drdan = "333333333333333333333333333333\n3eeee33eee3333eeee33eee33eeee3\n33e33e3e33e3333e33e33e3e33e33e\n33e33e3e33e3333e33e33e3e33e33e\n33e33e3eee33333e33e3eeeee3e33e\n33e33e3e3e33333e33e3e333e3e33e\n3eeee33e33e333eeee43e33be3e33e\n33ee33333333e333ee4433bbee3333\n33ee3333333333333e43333be33333\n3b4333eebb3333bb333343343333ee\nbb44b3eebb3333bb333343343333ee\n3b433beebb3333bb333344443333ee\neeb7b734e333333e43bb47473b4333\nee7bbb44ee3333ee44bb4444bb4433\neeb77b34e333333e43bb47773b4333\nbbbbbbbb34b33333ee3343b4333333\nb3b33b3b44bb3333ee3344b4433333\n33bb3bb334b33333ee3333bb333333\n9be9999eb9ee999994b99999999944\nbbee99eebbee999944bb9999999944\n9be9999eb9ee999994b9cccccc9944\n9994b94499999eb9999c6666669999\n9944bb449999eebb999c6666669999\n9994b94499999eb9999c7777771119\n44e7e7ee9999999991167767761111\n44eeeeeb9999999111166666661111\n44e7eeeb9999991111166666661111\nbb9e77e994e9991111880000081111\nbb9e99e944ee911110008000800011\nbbee99ee94e9911110000888000011\nee999be99999911110000070000011\nee99bbee9999911110000700000011\nee999be99999991110000700000011\n"
 ,	font1 = "0000    0 0000 0000 0  0 0000 0000 0000 0000 0000\n0  0    0    0    0 0  0 0    0       0 0  0 0  0\n0  0    0 0000 0000 0000 0000 0000    0 0000 0000\n0  0    0 0       0    0    0 0  0    0 0  0    0\n0000    0 0000 0000    0 0000 0000    0 0000 0000\n"
-,	font2 = " 00  000   000 000  0000 0000  000 0  0 0000 0000 0  0 0    00 0 0  0  00  000   00  000   000 0000 0  0 0  0 0  0 0  0 0  0 0000\n0  0 0  0 0    0  0 0    0    0    0  0   0     0 0 0  0    0000 00 0 0  0 0  0 0  0 0  0 0      0  0  0 0  0 0 00 0  0 0  0    0\n0000 000  0    0  0 0000 0000 0 00 0000   0     0 00   0    0 00 0 00 0  0 0  0 0  0 000   00    0  0  0 0  0 0 00  00   000   0\n0  0 0  0 0    0  0 0    0    0  0 0  0   0     0 0 0  0    0 00 0  0 0  0 000  0 00 0 0     0   0  0  0  00  0000 0  0    0  0\n0  0 000   000 000  0000 0     000 0  0 0000 000  0  0 0000 0  0 0  0  00  0     000 0  0 000    0   00   00   0 0 0  0 000  0000\n"
+,	font2 = " 00  000   000 000  0000 0000  000 0  0 0000 0000 0  0 0    0000 0  0  00  000   00  000   000 0000 0  0 0  0 0  0 0  0 0  0 0000\n0  0 0  0 0    0  0 0    0    0    0  0   0     0 0 0  0    0000 00 0 0  0 0  0 0  0 0  0 0      0  0  0 0  0 0 00 0  0 0  0    0\n0000 000  0    0  0 0000 0000 0 00 0000   0     0 00   0    0 00 0 00 0  0 0  0 0  0 000   00    0  0  0 0  0 0 00  00   000   0\n0  0 0  0 0    0  0 0    0    0  0 0  0   0     0 0 0  0    0 00 0  0 0  0 000  0 00 0 0     0   0  0  0  00  0000 0  0    0  0\n0  0 000   000 000  0000 0     000 0  0 0000 000  0  0 0000 0  0 0  0  00  0     000 0  0 000    0   00   00   0 0 0  0 000  0000\n"
 ,	leftsidepinkpipe = "f02\nf02\nf02"
 ,	rightsidepinkpipe = "20f\n20f\n20f"
 ,	bottomsidepinkpipe = "00\nff\nff"
@@ -270,14 +270,12 @@ local drdankeytapleft
 local drdankeytapright
 local drdankeydown
 local drdancombo
-local drdanviruslevel
+local drdanviruslevel = 1
 local drdanspeed = 3
 local drdancolors = {colors.red, colors.yellow, colors.blue}
 
 local function initDrDan()
 	drdanmode, drdankeyleft, drdankeyright, drdankeydown = false, false, false, false
-	drdanviruslevel = 1
-	drdanspeed = 3
 	drdanvirus = 0
 	drdanstep = 0
 	drdanscore = 0
@@ -287,8 +285,8 @@ local function initDrDan()
 end
 
 local function updateInitLevelDrDan()
-	local totalvirus = drdanviruslevel * 2
-	local miny = 12 - math.floor(drdanviruslevel / 20 * 8)
+	local totalvirus = math.floor(drdanviruslevel * 1.5) + 1
+	local miny = 12 - math.floor(drdanviruslevel / 20 * 5)
 	if drdanvirus < totalvirus then
 		while true do
 			local x, y = math.floor(math.random() * 8), math.floor(miny + math.random() * (16 - miny))
@@ -307,7 +305,7 @@ end
 local function updateInitGameDrDan()
 	if drdanvirus == 0 then
 		drdanplayfield = { }
-		drdanscore = drdanscore + drdanviruslevel * 5
+		drdanscore = drdanscore + drdanviruslevel * 5 + drdanspeed
 		drdanviruslevel = drdanviruslevel + 1
 		drdanmode = 1
 		return
@@ -324,6 +322,7 @@ local function updateInitGameDrDan()
 	if not (drdanplayfield[7] or drdanplayfield[9]) then
 		drdanmode = 3
 	else
+		savedata.drdantopscore = drdanscore
 		drdanmode = 5
 		if drdanplayfield[7] then
 			drdanplayfield[9] = drdanpill2
@@ -525,12 +524,17 @@ local function drawDrDanPlayfield()
 	drawText(string.format("%05d", drdanscore), 9, 45, img.font1, 4, 48, colors.black)
 	drawRect(colors.yellow, 64, 6, 32, 48)
 	drawRect(colors.lightBlue, 66, 7, 28, 46)
-	drawImage(img.drdanlevel, 67, 10)
-	drawText(string.format("%02d", drdanviruslevel), 84, 16, img.font1, 4, 48, colors.black)
-	drawImage(img.drdanspeed, 67, 24)
-	drawText(string.format("%01d", drdanspeed), 89, 30, img.font1, 4, 48, colors.black)
-	drawImage(img.drdanvirus, 67, 38)
-	drawText(string.format("%02d", drdanvirus), 84, 44, img.font1, 4, 48, colors.black)
+	if drdanmode ~= 5 then
+		drawImage(img.drdanlevel, 67, 10)
+		drawText(string.format("%02d", drdanviruslevel), 84, 16, img.font1, 4, 48, colors.black)
+		drawImage(img.drdanspeed, 67, 24)
+		drawText(string.format("%01d", drdanspeed), 89, 30, img.font1, 4, 48, colors.black)
+		drawImage(img.drdanvirus, 67, 38)
+		drawText(string.format("%02d", drdanvirus), 84, 44, img.font1, 4, 48, colors.black)
+	else
+		drawText("GAME", 70, 22, img.font2, 4, 65, colors.black)
+		drawText("OVER", 70, 31, img.font2, 4, 65, colors.black)
+	end
 end
 
 local function updateDrDan()
@@ -576,11 +580,17 @@ local function clickDrDan(x, y)
 		elseif y >= 16 and y <= 18 and x >= 20 and x <= 32 then
 			drdanmode = 1
 		end
-	else
+	elseif drdanmode == 5 then
+		initDrDan()
+		drdanmode = false
 	end
 end
 
 local function keyDrDan(key, hold)
+	if drdanmode == 5 then
+		initDrDan()
+		drdanmode = false
+	end
 	if key == 203 then
 		drdankeyleft = true
 		drdankeytapleft = true
@@ -589,7 +599,7 @@ local function keyDrDan(key, hold)
 		drdankeytapright = true
 	elseif key == 208 then
 		drdankeydown = true
-	elseif key == 57 and not hold then
+	elseif key == 57 and not hold and drdanmode == 3 then
 		local temp = drdanpill1
 		drdanpill1 = drdanpill2
 		drdanpill2 = temp
