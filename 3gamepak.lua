@@ -21,6 +21,7 @@ local img = {
 ,	exit = "eeeeeeeeeeeeeeeeee\ne000e0e0e000e000ee\ne00eee0eee0eee0eee\ne0eeee0eee0eee0eee\ne000e0e0e000ee0eee\neeeeeeeeeeeeeeeeee\n"
 ,	drdan = "333333333333333333333333333333\n3eeee33eee3333eeee33eee33eeee3\n33e33e3e33e3333e33e33e3e33e33e\n33e33e3e33e3333e33e33e3e33e33e\n33e33e3eee33333e33e3eeeee3e33e\n33e33e3e3e33333e33e3e333e3e33e\n3eeee33e33e333eeee43e33be3e33e\n33ee33333333e333ee4433bbee3333\n33ee3333333333333e43333be33333\n3b4333eebb3333bb333343343333ee\nbb44b3eebb3333bb333343343333ee\n3b433beebb3333bb333344443333ee\neeb7b734e333333e43bb47473b4333\nee7bbb44ee3333ee44bb4444bb4433\neeb77b34e333333e43bb47773b4333\nbbbbbbbb34b33333ee3343b4333333\nb3b33b3b44bb3333ee3344b4433333\n33bb3bb334b33333ee3333bb333333\n9be9999eb9ee999994b99999999944\nbbee99eebbee999944bb9999999944\n9be9999eb9ee999994b9cccccc9944\n9994b94499999eb9999c6666669999\n9944bb449999eebb999c6666669999\n9994b94499999eb9999c7777771119\n44e7e7ee9999999991167767761111\n44eeeeeb9999999111166666661111\n44e7eeeb9999991111166666661111\nbb9e77e994e9991111880000081111\nbb9e99e944ee911110008000800011\nbbee99ee94e9911110000888000011\nee999be99999911110000070000011\nee99bbee9999911110000700000011\nee999be99999991110000700000011\n"
 ,	font1 = "0000    0 0000 0000 0  0 0000 0000 0000 0000 0000\n0  0    0    0    0 0  0 0    0       0 0  0 0  0\n0  0    0 0000 0000 0000 0000 0000    0 0000 0000\n0  0    0 0       0    0    0 0  0    0 0  0    0\n0000    0 0000 0000    0 0000 0000    0 0000 0000\n"
+,	font2 = " 00  000   000 000  0000 0000  000 0  0 0000 0000 0  0 0    00 0 0  0  00  000   00  000   000 0000 0  0 0  0 0  0 0  0 0  0 0000\n0  0 0  0 0    0  0 0    0    0    0  0   0     0 0 0  0    0000 00 0 0  0 0  0 0  0 0  0 0      0  0  0 0  0 0 00 0  0 0  0    0\n0000 000  0    0  0 0000 0000 0 00 0000   0     0 00   0    0 00 0 00 0  0 0  0 0  0 000   00    0  0  0 0  0 0 00  00   000   0\n0  0 0  0 0    0  0 0    0    0  0 0  0   0     0 0 0  0    0 00 0  0 0  0 000  0 00 0 0     0   0  0  0  00  0000 0  0    0  0\n0  0 000   000 000  0000 0     000 0  0 0000 000  0  0 0000 0  0 0  0  00  0     000 0  0 000    0   00   00   0 0 0  0 000  0000\n"
 ,	leftsidepinkpipe = "f02\nf02\nf02"
 ,	rightsidepinkpipe = "20f\n20f\n20f"
 ,	bottomsidepinkpipe = "00\nff\nff"
@@ -29,6 +30,31 @@ local img = {
 ,	righttoppinkpipe = "ff\nff\n0f"
 ,	leftbottompinkpipe = "f0\nff\nff"
 ,	rightbottompinkpipe = "0f\nff\nff"
+,	decreasearrow = "  b\n bb\nbbb\n bb\n  b"
+,	increasearrow = "b  \nbb \nbbb\nbb \nb  "
+,	leftsidecyanpipe = "9079\n9079\n9079"
+,	rightsidecyanpipe = "9709\n9709\n9709"
+,	bottomsidecyanpipe = "99\n77\n99"
+,	topsidecyanpipe = "99\n77\n99"
+,	lefttopcyanpipe = "9999\n9077\n9079"
+,	righttopcyanpipe = "9999\n7709\n9709"
+,	leftbottomcyanpipe = "9079\n9077\n9999"
+,	rightbottomcyanpipe = "9709\n7709\n9999"
+,	drdanlevel = "f    ffff f  f ffff f\nf    f    f  f f    f\nf    ffff f  f ffff f\nf    f     ff  f    f\nffff ffff  ff  ffff ffff\n"
+,	drdanspeed = " fff fff  ffff ffff fff\nf    f  f f    f    f  f\n ff  f  f ffff ffff f  f\n   f fff  f    f    f  f\nfff  f    ffff ffff fff\n"
+,	drdanvirus = "f  f ffff fff  f  f  fff\nf  f   f  f  f f  f f\nf  f   f  fff  f  f  ff\n ff    f  f f  f  f    f\n ff  ffff f  f  ff  fff\n"
+,	drdanvirus1 = "e \n e\ne "
+,	drdanvirus2 = " e \ne \n e"
+,	drdanblob = "ee\nee\nee"
+,	drdanpillleft = " e\nee\n e"
+,	drdanpillright = "e \nee\ne "
+,	drdanpilltop = "  \nee\nee"
+,	drdanpillbottom = "ee\nee\n  "
+, 	drdantop = "ffff  ff  fff\n  f  f  f f  f\n  f  f  f f  f\n  f  f  f fff\n  f   ff  f\n"
+,	drdanscore = " fff  fff  ff  fff  ffff\nf    f    f  f f  f f\n ff  f    f  f fff  ffff\n   f f    f  f f f  f\nfff   fff  ff  f  f ffff"
+,	drdandrdan = "   cccccc\n  c666666\n  c666666\n  c777777\n  6776776\n  6666666\n  6666666\n 88000008\n00080008000\n00008880000\n00000700000\n00007000000\n00007000000\n"
+,	drdanbigpillleft = " eee\neeee\neeee\n eee"
+,	drdanbigpillright = "eee \neeee\neeee\neee "
 }
 -- Global variables
 local mode = 1
@@ -36,7 +62,7 @@ local quit = false
 
 -- Save data functions
 
-local savedata = { }
+local savedata = {drdantopscore = 0}
 local savedatapath = fs.getDir(shell.getRunningProgram()).."/3gpsave.sav"
 
 local function save()
@@ -233,36 +259,351 @@ end
 
 -- Dr Dan
 
-local drdanmode
+local drdanmode, drdanplayfield, drdanvirus, drdanstep, drdanscore, drdanpill1, drdanpill2, drdannextpill1, drdannextpill2
+local drdanpillx1
+local drdanpillx2
+local drdanpilly1
+local drdanpilly2
+local drdankeyleft
+local drdankeyright
+local drdankeytapleft
+local drdankeytapright
+local drdankeydown
+local drdancombo
+local drdanviruslevel
+local drdanspeed = 3
+local drdancolors = {colors.red, colors.yellow, colors.blue}
 
 local function initDrDan()
-	drdanmode = true
+	drdanmode, drdankeyleft, drdankeyright, drdankeydown = false, false, false, false
+	drdanviruslevel = 1
+	drdanspeed = 3
+	drdanvirus = 0
+	drdanstep = 0
+	drdanscore = 0
+	drdanplayfield = { }
+	drdannextpill1 = math.floor(1 + math.random() * 3)
+	drdannextpill2 = math.floor(1 + math.random() * 3)
+end
+
+local function updateInitLevelDrDan()
+	local totalvirus = drdanviruslevel * 2
+	local miny = 12 - math.floor(drdanviruslevel / 20 * 8)
+	if drdanvirus < totalvirus then
+		while true do
+			local x, y = math.floor(math.random() * 8), math.floor(miny + math.random() * (16 - miny))
+			if drdanplayfield[(y * 8 + x) * 2 + 2] ~= 1 then
+				drdanplayfield[(y * 8 + x) * 2 + 1] = math.floor(1 + math.random() * 3)
+				drdanplayfield[(y * 8 + x) * 2 + 2] = 1
+				drdanvirus = drdanvirus + 1
+				break
+			end
+		end
+	else
+		drdanmode = 2
+	end
+end
+
+local function updateInitGameDrDan()
+	if drdanvirus == 0 then
+		drdanplayfield = { }
+		drdanscore = drdanscore + drdanviruslevel * 5
+		drdanviruslevel = drdanviruslevel + 1
+		drdanmode = 1
+		return
+	end
+	drdanpill1 = drdannextpill1
+	drdanpill2 = drdannextpill2
+	drdanori = 1
+	drdanpillx1 = 3
+	drdanpilly1 = 0
+	drdanpillx2 = 4
+	drdanpilly2 = 0
+	drdannextpill1 = math.floor(1 + math.random() * 3)
+	drdannextpill2 = math.floor(1 + math.random() * 3)
+	if not (drdanplayfield[7] or drdanplayfield[9]) then
+		drdanmode = 3
+	else
+		drdanmode = 5
+		if drdanplayfield[7] then
+			drdanplayfield[9] = drdanpill2
+			drdanplayfield[10] = 4
+		else
+			drdanplayfield[7] = drdanpill1
+			drdanplayfield[8] = 3
+		end
+	end
+end
+
+local function checkRowsDrDan()
+	local color = drdanplayfield[1]
+	local ybegin = 0
+	local row = 0
+	local check = false
+	for i = 0, 7 do
+		for j = 0, 16 do
+			local c = drdanplayfield[(j * 8 + i) * 2 + 1]
+			if c ~= color then
+				if color and row >= 4 then
+					drdanscore = drdanscore + drdancombo * (1 + (row - 4) * 2)
+					for k = ybegin, j - 1 do
+						if drdanplayfield[(k * 8 + i) * 2 + 2] == 1 then
+							drdanvirus = drdanvirus - 1
+						elseif drdanplayfield[(k * 8 + i) * 2 + 2] == 3 then
+							if drdanplayfield[(k * 8 + i) * 2 + 4] == 4 then
+								drdanplayfield[(k * 8 + i) * 2 + 4] = 2
+							end
+						elseif drdanplayfield[(k * 8 + i) * 2 + 2] == 4 then
+							if drdanplayfield[(k * 8 + i) * 2] == 3 then
+								drdanplayfield[(k * 8 + i) * 2] = 2
+							end
+						end
+						drdanplayfield[(k * 8 + i) * 2 + 1] = nil
+						drdanplayfield[(k * 8 + i) * 2 + 2] = nil
+					end
+					check = true
+					drdancombo = drdancombo + 1
+				end
+				ybegin = j
+				row = 1
+				color = c
+			else
+				row = row + 1
+			end
+		end
+	end
+	return check
+end
+
+local function updateGameDrDan()
+	if drdankeydown or (drdanstep % (20 - drdanspeed * 2) == 0) then
+		local newy1 = drdanpilly1 + 1
+		local newy2 = drdanpilly2 + 1
+		if not (drdanplayfield[(newy1 * 8 + drdanpillx1) * 2 + 1] or drdanplayfield[(newy2 * 8 + drdanpillx2) * 2 + 1]) then
+			drdanpilly1 = newy1
+			drdanpilly2 = newy2
+		end
+	end
+	if (drdankeyleft or drdankeytapleft) and (drdanstep % 2 == 0) then
+		drdankeytapleft = false
+		if drdanpillx1 > 0 and drdanpillx2 > 0 then
+			local newx1 = drdanpillx1 - 1
+			local newx2 = drdanpillx2 - 1
+			if not (drdanplayfield[(drdanpilly1 * 8 + newx1) * 2 + 1] or drdanplayfield[(drdanpilly2 * 8 + newx2) * 2 + 1]) then
+				drdanpillx1 = newx1
+				drdanpillx2 = newx2
+			end
+		end
+	end
+	if (drdankeyright or drdankeytapright) and (drdanstep % 2 == 0) then
+		drdankeytapright = false
+		if drdanpillx1 < 7 and drdanpillx2 < 7 then
+			local newx1 = drdanpillx1 + 1
+			local newx2 = drdanpillx2 + 1
+			if not (drdanplayfield[(drdanpilly1 * 8 + newx1) * 2 + 1] or drdanplayfield[(drdanpilly2 * 8 + newx2) * 2 + 1]) then
+				drdanpillx1 = newx1
+				drdanpillx2 = newx2
+			end
+		end
+	end
+	if drdanpilly1 == 15 or drdanpilly2 == 15 or drdanplayfield[((drdanpilly1 + 1) * 8 + drdanpillx1) * 2 + 1] or drdanplayfield[((drdanpilly2 + 1) * 8 + drdanpillx2) * 2 + 1] then
+		drdanplayfield[(drdanpilly1 * 8 + drdanpillx1) * 2 + 1] = drdanpill1
+		drdanplayfield[(drdanpilly1 * 8 + drdanpillx1) * 2 + 2] = 3
+		drdanplayfield[(drdanpilly2 * 8 + drdanpillx2) * 2 + 1] = drdanpill2
+		drdanplayfield[(drdanpilly2 * 8 + drdanpillx2) * 2 + 2] = 4
+		drdancombo = 1
+		if checkRowsDrDan() then
+			drdanmode = 4
+		else
+			drdanmode = 2
+		end
+	end
+end
+
+local function fallDrDan()
+	if drdanstep % 4 == 0 then
+		local check = false
+		for i = 0, 7 do
+			for j = 14, 0, -1 do
+				if drdanplayfield[(j * 8 + i) * 2 + 2] == 2 and not drdanplayfield[((j + 1) * 8 + i) * 2 + 2] then
+					local color = drdanplayfield[(j * 8 + i) * 2 + 1]
+					drdanplayfield[(j * 8 + i) * 2 + 1] = nil
+					drdanplayfield[(j * 8 + i) * 2 + 2] = nil
+					drdanplayfield[((j + 1) * 8 + i) * 2 + 1] = color
+					drdanplayfield[((j + 1) * 8 + i) * 2 + 2] = 2
+					check = true
+				end
+			end
+		end
+		if not (check or checkRowsDrDan()) then
+			drdanmode = 2
+		end
+	end
+end
+
+local function drawDrDanSetup()
+	for j = 0, 56 do
+		for i = 0, 101 do
+			buffer[j * 102 + i + 1] = ((i % 4 < 2) == not (j % 6 < 3)) and 16384 or 2
+		end
+	end
+	drawRect(colors.black, 21, 6, 60, 48)
+	for i = 0, 15 do
+		drawImage(img.leftsidepinkpipe, 18, 6 + i * 3)
+		drawImage(img.rightsidepinkpipe, 81, 6 + i * 3)
+	end
+	for i = 0, 30 do
+		drawImage(img.bottomsidepinkpipe, 20 + i * 2, 54)
+		drawImage(img.topsidepinkpipe, 20 + i * 2, 3)
+	end
+	drawImage(img.lefttoppinkpipe, 18, 3)
+	drawImage(img.righttoppinkpipe, 82, 3)
+	drawImage(img.leftbottompinkpipe, 18, 54)
+	drawImage(img.rightbottompinkpipe, 82, 54)
+	drawText("DR DAN", 36, 7, img.font2, 4, 65, colors.lightBlue)
+	drawText("VIRUS LEVEL", 24, 15, img.font2, 4, 65)
+	drawText(string.format("%02d", drdanviruslevel), 46, 22, img.font1, 4, 48, colors.red)
+	drawImage(img.decreasearrow, 41, 22)
+	drawImage(img.increasearrow, 57, 22)
+	drawText("SPEED", 39, 31, img.font2, 4, 65)
+	drawText(tostring(drdanspeed), 49, 38, img.font1, 4, 48, colors.red)
+	drawImage(img.decreasearrow, 44, 38)
+	drawImage(img.increasearrow, 55, 38)
+	drawRect(colors.white, 38, 45, 26, 7)
+	drawText("START", 39, 46, img.font2, 4, 65, colors.black)
+end
+
+local function drawDrDanPlayfield()
+	for j = 0, 56 do
+		for i = 0, 101 do
+			buffer[j * 102 + i + 1] = ((i % 4 < 2) == not (j % 6 < 3)) and 128 or 256
+		end
+	end
+	drawRect(colors.black, 42, 6, 16, 48)
+	for i = 0, 15 do
+		drawImage(img.leftsidecyanpipe, 38, 6 + i * 3)
+		drawImage(img.rightsidecyanpipe, 58, 6 + i * 3)
+	end
+	for i = 0, 7 do
+		drawImage(img.bottomsidecyanpipe, 42 + i * 2, 54)
+		drawImage(img.topsidecyanpipe, 42 + i * 2, 3)
+	end
+	for j = 0, 15 do
+		for i = 0, 7 do
+			local v, t = drdanplayfield[(j * 8 + i) * 2 + 1], drdanplayfield[(j * 8 + i) * 2 + 2]
+			if v then
+				if t == 1 then
+					drawImage((math.floor(drdanstep / 8 + i + j) % 2 == 0) and img.drdanvirus1 or img.drdanvirus2, 42 + i * 2, 6 + j * 3, drdancolors[v])
+				elseif t == 2 then
+					drawImage(img.drdanblob, 42 + i * 2, 6 + j * 3, drdancolors[v])
+				elseif t == 3 then
+					drawImage(img.drdanpillleft, 42 + i * 2, 6 + j * 3, drdancolors[v])
+				elseif t == 4 then
+					drawImage(img.drdanpillright, 42 + i * 2, 6 + j * 3, drdancolors[v])
+				end
+			end
+		end
+	end
+	if drdanmode == 3 and drdanpillx1 and drdanpilly1 then 
+		drawImage(img.drdanpillleft, 42 + drdanpillx1 * 2, 6 + drdanpilly1 * 3, drdancolors[drdanpill1])
+		drawImage(img.drdanpillright, 42 + drdanpillx2 * 2, 6 + drdanpilly2 * 3, drdancolors[drdanpill2])
+	end
+	drawImage(img.lefttopcyanpipe, 38, 3)
+	drawImage(img.righttopcyanpipe, 58, 3)
+	drawImage(img.leftbottomcyanpipe, 38, 54)
+	drawImage(img.rightbottomcyanpipe, 58, 54)
+	drawRect(colors.orange, 4, 5, 32, 16)
+	drawRect(colors.black, 5, 6, 30, 15)
+	drawImage(img.drdandrdan, 7, 8)
+	drawImage(img.drdanbigpillleft, 22, 9, drdancolors[drdannextpill1])
+	drawImage(img.drdanbigpillright, 26, 9, drdancolors[drdannextpill2])
+	drawRect(colors.yellow, 4, 21, 32, 33)
+	drawRect(colors.lightBlue, 6, 22, 28, 31)
+	drawImage(img.drdantop, 7, 25)
+	drawText(string.format("%05d", savedata.drdantopscore), 9, 31, img.font1, 4, 48, colors.black)
+	drawImage(img.drdanscore, 7, 39)
+	drawText(string.format("%05d", drdanscore), 9, 45, img.font1, 4, 48, colors.black)
+	drawRect(colors.yellow, 64, 6, 32, 48)
+	drawRect(colors.lightBlue, 66, 7, 28, 46)
+	drawImage(img.drdanlevel, 67, 10)
+	drawText(string.format("%02d", drdanviruslevel), 84, 16, img.font1, 4, 48, colors.black)
+	drawImage(img.drdanspeed, 67, 24)
+	drawText(string.format("%01d", drdanspeed), 89, 30, img.font1, 4, 48, colors.black)
+	drawImage(img.drdanvirus, 67, 38)
+	drawText(string.format("%02d", drdanvirus), 84, 44, img.font1, 4, 48, colors.black)
 end
 
 local function updateDrDan()
-	if drdanmode then
-		for j = 0, 56 do
-			for i = 0, 101 do
-				buffer[j * 102 + i + 1] = ((i % 4 < 2) == not (j % 6 < 3)) and 16384 or 2
+	drdanstep = drdanstep + 1
+	if not drdanmode then
+		drawDrDanSetup()
+	else
+		if drdanmode == 1 then
+			updateInitLevelDrDan()
+		elseif drdanmode == 2 then
+			updateInitGameDrDan()
+		elseif drdanmode == 3 then
+			updateGameDrDan()
+		elseif drdanmode == 4 then
+			fallDrDan()
+		end
+		drawDrDanPlayfield()
+	end
+end
+
+local function clickDrDan(x, y)
+	if not drdanmode then
+		if y == 8 or y == 9 then
+			if x == 21 or x == 22 then
+				if drdanviruslevel > 1 then
+					drdanviruslevel = drdanviruslevel - 1
+				end
+			elseif x == 29 or x == 30 then
+				if drdanviruslevel < 20 then
+					drdanviruslevel = drdanviruslevel + 1
+				end
 			end
+		elseif y >= 13 and y <= 15 then
+			if x == 23 or x == 24 then
+				if drdanspeed > 1 then
+					drdanspeed = drdanspeed - 1
+				end
+			elseif x == 28 or x == 29 then
+				if drdanspeed < 9 then
+					drdanspeed = drdanspeed + 1
+				end
+			end
+		elseif y >= 16 and y <= 18 and x >= 20 and x <= 32 then
+			drdanmode = 1
 		end
-		drawRect(colors.black, 21, 6, 60, 48)
-		for i = 0, 15 do
-			drawImage(img.leftsidepinkpipe, 18, 6 + i * 3)
-			drawImage(img.rightsidepinkpipe, 81, 6 + i * 3)
-		end
-		for i = 0, 30 do
-			drawImage(img.bottomsidepinkpipe, 20 + i * 2, 54)
-			drawImage(img.topsidepinkpipe, 20 + i * 2, 3)
-		end
-		drawImage(img.lefttoppinkpipe, 18, 3)
-		drawImage(img.righttoppinkpipe, 82, 3)
-		drawImage(img.leftbottompinkpipe, 18, 54)
-		drawImage(img.rightbottompinkpipe, 82, 54)
+	else
 	end
 end
 
 local function keyDrDan(key, hold)
+	if key == 203 then
+		drdankeyleft = true
+		drdankeytapleft = true
+	elseif key == 205 then
+		drdankeyright = true
+		drdankeytapright = true
+	elseif key == 208 then
+		drdankeydown = true
+	elseif key == 57 and not hold then
+		local temp = drdanpill1
+		drdanpill1 = drdanpill2
+		drdanpill2 = temp
+	end
+end
+
+local function keyUpDrDan(key)
+	if key == 203 then
+		drdankeyleft = false
+	elseif key == 205 then
+		drdankeyright = false
+	elseif key == 208 then
+		drdankeydown = false
+	end
 end
 
 -- Main Menu
@@ -311,6 +652,14 @@ local function passKey(key, hold)
 		quit = true
 	elseif mode == 1 then
 		keyIntro()
+	elseif mode == 4 then
+		keyDrDan(key, hold)
+	end
+end
+
+local function passKeyUp(key)
+	if mode == 4 then
+		keyUpDrDan(key)
 	end
 end
 
@@ -319,6 +668,8 @@ local function passClick(button, x, y)
 		clickIntro()
 	elseif mode == 2 then
 		clickMainMenu(x, y)
+	elseif mode == 4 then
+		clickDrDan(x, y)
 	end
 end
 
@@ -377,6 +728,8 @@ local function runProgram()
 			renderScreen()
 		elseif e[1] == "key" then
 			passKey(e[2], e[3])
+		elseif e[1] == "key_up" then
+			passKeyUp(e[2])
 		elseif e[1] == "mouse_click" then
 			passClick(e[2], e[3], e[4] + screenoffset)
 		elseif e[1] == "terminate" then
