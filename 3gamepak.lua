@@ -55,6 +55,7 @@ local img = {
 ,	drdandrdan = "   cccccc\n  c666666\n  c666666\n  c777777\n  6776776\n  6666666\n  6666666\n 88000008\n00080008000\n00008880000\n00000700000\n00007000000\n00007000000\n"
 ,	drdanbigpillleft = " eee\neeee\neeee\n eee"
 ,	drdanbigpillright = "eee \neeee\neeee\neee "
+,	stackerdx = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nbb88b888bb8bbb88b8b8b888b88bbb\nb8bbbb8bb8b8b8bbb8b8b8bbb8b8bb\nbb8bbb8bb888b8bbb88bb888b88bbb\nbbb8bb8bb8b8b8bbb8b8b8bbb8b8bb\nb88bbb8bb8b8bb88b8b8b888b8b8bb\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nbbbbbbbbbbbbb11111bbbb11bbb11b\nbbbbbbbbbbbbb111111bbb11bbb11b\nbbbbbbbbbbbbb11bb111bbb11b11bb\nbbbbbbbbbbbbb11bbb11bbbb111bbb\nbbbbbbbbbbbbb11bbb11bbbb111bbb\nbbbbbbbbbbbbb11bbb11bbbb111bbb\nbbbbbbbbbbbbb11bb111bbb11b11bb\nbbbbbbbbbbbbb111111bbb11bbb11b\nbbbbbbbbbbbbb11111bbbb11bbb11b\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nbb00000bbbbbbbbbbbbbbbbbbbbbbb\nbbbbbbbbbbbb000000bbbbbbbbbbbb\nbbbbbbbbbbb0000000bbbbbbbbbbbb\nbbbbbbbbbb000000000bbbbbbbbbbb\nbbbbbbbbbb000000000bbbbbbbbbbb\nbbbbbbbbb0000000000bbbbbbbbbbb\nbbbbbbbbb000000000000bbbbbbbbb\nbbbbbbbb000000000000000bbbbbbb\nbbbbbbb0000000000000000bbbbbbb\n"
 }
 -- Global variables
 local mode = 1
@@ -62,7 +63,7 @@ local quit = false
 
 -- Save data functions
 
-local savedata = {drdantopscore = 0}
+local savedata = {drdantopscore = 0, stackerdxtopscore = 0}
 local savedatapath = fs.getDir(shell.getRunningProgram()).."/3gpsave.sav"
 
 local function save()
@@ -298,6 +299,7 @@ local function updateInitLevelDrDan()
 			end
 		end
 	else
+		drdankeydown = false
 		drdanmode = 2
 	end
 end
@@ -322,7 +324,9 @@ local function updateInitGameDrDan()
 	if not (drdanplayfield[7] or drdanplayfield[9]) then
 		drdanmode = 3
 	else
-		savedata.drdantopscore = drdanscore
+		if drdanscore > savedata.drdantopscore then
+			savedata.drdantopscore = drdanscore
+		end
 		drdanmode = 5
 		if drdanplayfield[7] then
 			drdanplayfield[9] = drdanpill2
@@ -616,6 +620,108 @@ local function keyUpDrDan(key)
 	end
 end
 
+-- Stacker DX
+local sdxmode
+local sdxstep
+local sdxcamera
+local sdxheight
+local sdxwidth
+local sdxpos
+local sdxleft, sdxright
+local sdxscore
+
+local function initStackerDX()
+	sdxmode = 1
+	sdxstep = 0
+	sdxcamera = 47
+	sdxheight = 2
+	sdxleft = {35, 35}
+	sdxright = {66, 66}
+	sdxwidth = 32
+	sdxpos = 20
+	sdxscore = 0
+end
+
+local function updateStackerDX()
+	sdxstep = sdxstep + 1
+	for j = 0, 56 do
+		local height = sdxcamera - j
+		local color
+		if height < 3 then
+			color = colors.green
+		elseif height < 9 then
+			color = colors.lime
+		elseif height < 57 then
+			color = colors.lightBlue
+		elseif height < 81 then
+			color = colors.cyan
+		elseif height < 111 then
+			color = colors.blue
+		elseif height < 150 then
+			color = colors.black
+		end
+		for i = 0, 101 do
+			buffer[j * 102 + i + 1] = color
+		end
+		if sdxleft[height + 1] then
+			for i = sdxleft[height + 1], sdxright[height + 1] do
+				buffer[j * 102 + i + 1] = 1
+			end
+		end
+	end
+	drawImage(img.drdanscore, 9, 5, colors.lightGray)
+	drawText(string.format("%05d", sdxscore), 9, 12, img.font1, 4, 48)
+	drawImage(img.drdantop, 74, 5, colors.lightGray)
+	drawText(string.format("%05d", savedata.stackerdxtopscore), 69, 12, img.font1, 4, 48)
+	if sdxmode == 1 then
+		if math.floor(sdxstep % 1.5) == 0 then
+			sdxpos = sdxpos + 1
+		end
+		if sdxpos + sdxwidth > 100 then
+			sdxmode = 2
+			return
+		end
+		
+		local xmax = sdxpos + sdxwidth - 1
+		if xmax > 101 then xmax = 101 end
+		local height = sdxcamera - sdxheight
+		for i = sdxpos, xmax do
+			buffer[height * 102 + i + 1] = 1
+		end
+	else
+		if sdxscore > savedata.stackerdxtopscore then
+			savedata.stackerdxtopscore = sdxscore
+		end
+	end
+end
+
+local function keyStackerDX(key, hold)
+	if key == 57 and not hold then
+		if sdxmode == 1 then
+			local x1 = sdxpos
+			local x2 = sdxpos + sdxwidth - 1
+			if x2 < sdxleft[sdxheight] or x1 > sdxright[sdxheight] then
+				sdxmode = 2
+				return
+			end
+			if x1 < sdxleft[sdxheight] then x1 = sdxleft[sdxheight] end
+			if x2 > sdxright[sdxheight] then x2 = sdxright[sdxheight] end
+			sdxscore = sdxscore + 5 + math.floor(sdxheight / 5)
+			sdxheight = sdxheight + 1
+			sdxleft[sdxheight] = x1
+			sdxright[sdxheight] = x2
+			sdxwidth = x2 - x1 + 1
+			sdxpos = x1 - 20
+			sdxcamera = math.floor((sdxheight + 30) / 3) * 3 + 2
+			if sdxcamera < 47 then
+				sdxcamera = 47
+			end
+		else
+			initStackerDX()
+		end
+	end
+end
+
 -- Main Menu
 
 local function updateMainMenu()
@@ -626,7 +732,7 @@ local function updateMainMenu()
 	drawImage(img.help, 32, 51)
 	drawImage(img.exit, 52, 51)
 	drawImage(img.drdan, 2, 21)
-	drawRect(colors.gray, 36, 21, 30, 27)
+	drawImage(img.stackerdx, 36, 21)
 	drawRect(colors.gray, 70, 21, 30, 33)
 end
 
@@ -644,6 +750,10 @@ local function clickMainMenu(x, y)
 			mode = 4
 		end
 	end
+	if y >= 8 and y <= 16 and x >= 19 and x <= 33 then
+		initStackerDX()
+		mode = 5
+	end
 end
 
 -- Event passers
@@ -654,6 +764,8 @@ local function passTimer()
 		updateMainMenu()
 	elseif mode == 4 then
 		updateDrDan()
+	elseif mode == 5 then
+		updateStackerDX()
 	end
 end
 
@@ -664,6 +776,8 @@ local function passKey(key, hold)
 		keyIntro()
 	elseif mode == 4 then
 		keyDrDan(key, hold)
+	elseif mode == 5 then
+		keyStackerDX(key, hold)
 	end
 end
 
