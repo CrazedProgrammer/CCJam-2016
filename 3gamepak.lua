@@ -56,6 +56,11 @@ local img = {
 ,	drdanbigpillleft = " eee\neeee\neeee\n eee"
 ,	drdanbigpillright = "eee \neeee\neeee\neee "
 ,	stackerdx = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nbb88b888bb8bbb88b8b8b888b88bbb\nb8bbbb8bb8b8b8bbb8b8b8bbb8b8bb\nbb8bbb8bb888b8bbb88bb888b88bbb\nbbb8bb8bb8b8b8bbb8b8b8bbb8b8bb\nb88bbb8bb8b8bb88b8b8b888b8b8bb\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nbbbbbbbbbbbbb11111bbbb11bbb11b\nbbbbbbbbbbbbb111111bbb11bbb11b\nbbbbbbbbbbbbb11bb111bbb11b11bb\nbbbbbbbbbbbbb11bbb11bbbb111bbb\nbbbbbbbbbbbbb11bbb11bbbb111bbb\nbbbbbbbbbbbbb11bbb11bbbb111bbb\nbbbbbbbbbbbbb11bb111bbb11b11bb\nbbbbbbbbbbbbb111111bbb11bbb11b\nbbbbbbbbbbbbb11111bbbb11bbb11b\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\nbb00000bbbbbbbbbbbbbbbbbbbbbbb\nbbbbbbbbbbbb000000bbbbbbbbbbbb\nbbbbbbbbbbb0000000bbbbbbbbbbbb\nbbbbbbbbbb000000000bbbbbbbbbbb\nbbbbbbbbbb000000000bbbbbbbbbbb\nbbbbbbbbb0000000000bbbbbbbbbbb\nbbbbbbbbb000000000000bbbbbbbbb\nbbbbbbbb000000000000000bbbbbbb\nbbbbbbb0000000000000000bbbbbbb\n"
+,	bhbird1 = "          dd\n         dddd\n         d00d\n         0ff0\n         ffff\n        ffffff\n       ffffffff\n      ffffffffff\n      ffffffffff\n     fffff00fffff\n    fff  1001 ffff\n    ff  11  11  ff\n        11  11\n"
+,	bhbird2 = "          dd\n         dddd\n         d00d\n         0ff0\n         ffff\n   fff  ffffff  fff\n ffffffffffffffffffff\nffffffffffffffffffffff\nff    ffffffffff    ff\n        ff00ff\n         1001\n        11  11\n        11  11\n"
+,	bhbird3 = "          dd\n  ff     dddd     ff\n fff     d00d     fff\n ffff    0ff0    ffff\n  fffff  ffff  fffff\n   ffffffffffffffff\n    ffffffffffffff\n     ffffffffffff\n       ffffffff\n        ff00ff\n         1001\n        11  11\n        11  11\n"
+,	bhdead1 = "     ff      \n  110ff   fff\n1 110ff  ffff\n10000ff0fffff\n 000ff0fffff \n 000fffffff  \n  00ffffff   \n   0ffff     \n   ffff      \n   0000      \n 11dddd      \n111db0d      \n   dddd      \n"
+,	bhdead2 = "      ff\nfff   ff011\nffff  ff011 1\nfffff0ff00001\n fffff0ff000\n  fffffff000\n   ffffff00\n     ffff0\n      ffff\n      0000\n      dddd11\n      d0bd111\n      dddd\n"
 }
 -- Global variables
 local mode = 1
@@ -153,7 +158,7 @@ local function drawImage(image, x, y, color, sx, swidth)
 	for i = 1, #image do
 		c = image[i]
 		if c then
-			if c ~= 0 and ix >= sx and ix < sx + swidth then
+			if c ~= 0 and ix >= sx and ix < sx + swidth and (x + ix - sx) >= 0 and (y + iy) >= 0 and (x + ix - sx) < 102 and (y + iy) < 57 then
 				buffer[(y + iy) * 102 + x + ix - sx + 1] = color or c
 			end
 			ix = ix + 1
@@ -722,6 +727,183 @@ local function keyStackerDX(key, hold)
 	end
 end
 
+-- Bird Hunt
+
+local bhlightgrassheights
+local bhdarkgrassheights
+local bhbirds
+local bhdeadbirds
+local bhmode
+local bhwave
+local bhscore
+local bhblackscreen
+local bhblackscreenboxx
+local bhblackscreenboxy
+local bhshots
+local bhlives
+local bhstep = 0
+
+local function initBirdHunt()
+	bhlightgrassheights = { }
+	for i = 1, 102 do
+		bhlightgrassheights[i] = math.floor(40 + math.random() * 7)
+	end
+	bhdarkgrassheights = { }
+	for i = 1, 102 do
+		bhdarkgrassheights[i] = math.floor(45 + math.random() * 10)
+	end
+	
+	bhbirds = { }
+	bhdeadbirds = { }
+	bhmode = 1
+	bhwave = 0
+	bhscore = 0
+	bhlives = 3
+end
+
+local function initWaveBirdHunt()
+	bhscore = bhscore + bhwave * 2
+	bhbirds = { }
+	bhwave = bhwave + 1
+	local birds = math.floor((bhwave - 1) / 3) + 1
+	for i = 1, birds do
+		local bird = { }
+		bird.x = math.floor(math.random() * 80)
+		bird.y = 70 + math.random() * 50 * birds
+		bird.speed = 2.5 + ((bhwave - 1) % 3) * 0.2 + math.random() * 0.3 + bhwave / 10
+		bird.frame = math.floor(math.random() * 3) + 1
+		bhbirds[i] = bird
+	end
+	bhmode = 2
+	bhshots = math.floor(bhwave / 3) + 2
+end
+
+local function updateGameBirdHunt()
+	if #bhbirds == 0 and #bhdeadbirds == 0 then
+		bhmode = 1
+		return
+	end
+	local maxy = -100
+	for i = 1, #bhbirds do
+		local bird = bhbirds[i]
+		bird.y = bird.y - bird.speed
+		if bird.y > maxy then
+			maxy = bird.y
+		end
+		if math.floor(bhstep * 3) % 2 == 0 then
+			bird.frame = bird.frame % 3 + 1
+		end
+	end
+	if maxy < -20 and #bhdeadbirds == 0 then
+		bhmode = 3
+	end
+	local i = 1
+	while i <= #bhdeadbirds do
+		bhdeadbirds[i].y = bhdeadbirds[i].y + 2
+		bhdeadbirds[i].frame = bhdeadbirds[i].frame + 1
+		if bhdeadbirds[i].y > 80 then
+			table.remove(bhdeadbirds, i)
+			i = i - 1
+		end
+		i = i + 1
+	end
+end
+
+local function updateDeadBirdHunt()
+	bhlives = bhlives - 1
+	if bhlives > 0 then
+		bhmode = 1
+	else
+		bhmode = 4
+	end
+end
+
+local function drawPlayfieldBirdHunt()
+	if bhblackscreen then
+		clearScreen(colors.black)
+		for i = 1, #bhbirds do
+			drawRect(colors.white, bhbirds[i].x, math.floor(bhbirds[i].y), 22, 13)
+		end
+		if bhblackscreenboxx then
+			drawRect(colors.red, bhblackscreenboxx, math.floor(bhblackscreenboxy), 22, 13)
+		end
+	else
+		clearScreen(colors.lightBlue)
+		for i = 1, #bhbirds do
+			local bird = bhbirds[i]
+			local birdimg = img.bhbird1
+			if bird.frame == 2 then
+				birdimg = img.bhbird2
+			elseif bird.frame == 3 then
+				birdimg = img.bhbird3
+			end
+			if bird.y < 57 then
+				drawImage(birdimg, bird.x, math.floor(bird.y))
+			end
+		end
+		for i = 1, #bhdeadbirds do
+			drawImage((math.floor(bhdeadbirds[i].frame / 4) % 2 == 0) and img.bhdead1 or img.bhdead2, bhdeadbirds[i].x, math.floor(bhdeadbirds[i].y))
+		end
+		for i = 0, 101 do
+			for j = bhlightgrassheights[i + 1], bhdarkgrassheights[i + 1] - 1 do
+				buffer[j * 102 + i + 1] = 32
+			end
+			for j = bhdarkgrassheights[i + 1], 56 do
+				buffer[j * 102 + i + 1] = 8192
+			end
+		end
+	end
+	if bhmode == 2 then
+		drawText(string.format("%01d", bhshots), 90, 10, img.font1, 4, 48, colors.gray)
+	end
+	bhblackscreen = false
+	bhblackscreenboxx = false
+end
+
+local function updateBirdHunt()
+	bhstep = bhstep + 1
+	if bhmode == 1 then
+		initWaveBirdHunt()
+	elseif bhmode == 2 then
+		updateGameBirdHunt()
+	elseif bhmode == 3 then
+		updateDeadBirdHunt()
+	end
+	drawPlayfieldBirdHunt()
+end
+
+local function clickBirdHunt(x, y)
+	if bhmode == 2 and bhshots > 0 then
+		local sx, sy = (x - 1) * 2 + 1, (y - 1) * 3 + 1
+		local totalbirds = #bhbirds
+		for i = 1, #bhbirds do
+			local bird = bhbirds[i]
+			if sx >= bird.x - 1 and sy >= bird.y - 1 and sx < bird.x + 24 and sy < bird.y + 15 then
+				bhbirds[i] = nil
+				bhscore = bhscore + 1
+				local dead = { }
+				dead.x = bird.x + 3
+				dead.y = bird.y
+				dead.frame = 0
+				bhdeadbirds[#bhdeadbirds + 1] = dead
+				local tempbirds = bhbirds
+				local newbirds = { }
+				for j = 1, totalbirds do
+					if tempbirds[j] then
+						newbirds[#newbirds + 1] = tempbirds[j]
+					end
+				end
+				bhbirds = newbirds
+				bhblackscreenboxx = bird.x
+				bhblackscreenboxy = bird.y
+				break
+			end
+		end
+		bhshots = bhshots - 1
+		bhblackscreen = true
+	end
+end
+
 -- Main Menu
 
 local function updateMainMenu()
@@ -748,6 +930,9 @@ local function clickMainMenu(x, y)
 		if x >= 2 and x <= 16 then
 			initDrDan()
 			mode = 4
+		elseif x >= 36 and x <= 50 then
+			initBirdHunt()
+			mode = 6
 		end
 	end
 	if y >= 8 and y <= 16 and x >= 19 and x <= 33 then
@@ -766,6 +951,8 @@ local function passTimer()
 		updateDrDan()
 	elseif mode == 5 then
 		updateStackerDX()
+	elseif mode == 6 then
+		updateBirdHunt()
 	end
 end
 
@@ -794,6 +981,8 @@ local function passClick(button, x, y)
 		clickMainMenu(x, y)
 	elseif mode == 4 then
 		clickDrDan(x, y)
+	elseif mode == 6 then
+		clickBirdHunt(x, y)
 	end
 end
 
