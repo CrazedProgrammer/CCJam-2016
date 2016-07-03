@@ -1,11 +1,24 @@
--- 3 Game Pak by CrazedProgrammer
--- Crazedprogrammer
+--[[
+3 Game Pak by CrazedProgrammer
+
+The MIT License (MIT)
+
+Copyright (c) 2016 CrazedProgrammer
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+]]
 
 local screenwidth, screenheight = term.getSize()
 local screenoffset = 19 - screenheight
 if not (_HOST and screenwidth == 51 and (screenheight == 19 or screenheight == 18) and term.isColor()) then
-	term.setTextColor(colors.red)
-	print("This program is not compatible with your current setup.\nRequirements:\n- ComputerCraft version 1.76 or newer\n- Runned on an Advanced Computer or a Command Computer (for sound support)\n- No more than 1 multishell instance")
+	if term.isColor() then
+		term.setTextColor(colors.red)
+	end
+	print("This program is not compatible with your current setup.\nRequirements:\n- ComputerCraft version 1.76 or newer\n- Must be ran on an Advanced Computer or a Command Computer\n- No more than 1 multishell instance")
 	return
 end
 
@@ -61,6 +74,7 @@ local img = {
 ,	bhbird3 = "          dd\n  ff     dddd     ff\n fff     d00d     fff\n ffff    0ff0    ffff\n  fffff  ffff  fffff\n   ffffffffffffffff\n    ffffffffffffff\n     ffffffffffff\n       ffffffff\n        ff00ff\n         1001\n        11  11\n        11  11\n"
 ,	bhdead1 = "     ff      \n  110ff   fff\n1 110ff  ffff\n10000ff0fffff\n 000ff0fffff \n 000fffffff  \n  00ffffff   \n   0ffff     \n   ffff      \n   0000      \n 11dddd      \n111db0d      \n   dddd      \n"
 ,	bhdead2 = "      ff\nfff   ff011\nffff  ff011 1\nfffff0ff00001\n fffff0ff000\n  fffffff000\n   ffffff00\n     ffff0\n      ffff\n      0000\n      dddd11\n      d0bd111\n      dddd\n"
+,	birdhunt = "eeeeee333ee33eeeeee333eeeeee33\neeeeeee33ee33eeeeeee33eeeeeee3\nee333ee33ee33ee333ee33ee333eee\nee333ee33ee33ee333ee33ee3333ee\neeeeee333ee33eeeeee333ee3333ee\neeeeeee33ee33eeeee3333ee3333ee\nee333ee33ee33ee33ee333ee3333ee\nee333ee33ee33ee33ee333ee333eee\neeeeeee33ee33ee333ee33eeeeeee3\neeeeee333ee33ee333ee33eeeeee33\n333333333333333333333333333333\n333333333333333333333333333333\nee33ee33ee33ee33ee333ee3eeeeee\nee33ee33ee33ee33eee33ee333ee33\nee33ee33ee33ee33eee33ee333ee33\neeeeee33ee33ee33ee3e3ee333ee33\nee33ee33ee33ee33ee3e3ee333ee33\nee33ee33ee33ee33ee33eee333ee33\nee33ee33ee33ee33ee33eee333ee33\nee33ee333eeee333ee333ee333ee33\n333333333333333333353333333333\n333333333333333553353333333355\n533333333333555553355333553355\n533533535533555553355333553555\n555533535535555555355335555555\nd5555553553555555555555555555d\nd555555555555d555555555555d55d\ndd5d55555d555dd555d555d555d5dd\ndd5ddddd5ddd5dd5ddddd5d5dddddd\ndd5ddddddddd5dddddddd5d5dddddd\ndd5ddddddddd5dddddddd5dddddddd\ndd5ddddddddddddddddddddddddddd\ndddddddddddddddddddddddddddddd\n"
 }
 -- Global variables
 local mode = 1
@@ -68,7 +82,7 @@ local quit = false
 
 -- Save data functions
 
-local savedata = {drdantopscore = 0, stackerdxtopscore = 0}
+local savedata = {drdantopscore = 0, stackerdxtopscore = 0, birdhunttopscore = 0}
 local savedatapath = fs.getDir(shell.getRunningProgram()).."/3gpsave.sav"
 
 local function save()
@@ -697,6 +711,7 @@ local function updateStackerDX()
 		if sdxscore > savedata.stackerdxtopscore then
 			savedata.stackerdxtopscore = sdxscore
 		end
+		drawText("GAME OVER", 30, 22, img.font2, 4, 65, (math.floor(sdxstep / 5) % 2 == 0) and colors.gray or colors.lightGray)
 	end
 end
 
@@ -758,19 +773,18 @@ local function initBirdHunt()
 	bhmode = 1
 	bhwave = 0
 	bhscore = 0
-	bhlives = 3
+	bhlives = 4
 end
 
 local function initWaveBirdHunt()
-	bhscore = bhscore + bhwave * 2
 	bhbirds = { }
 	bhwave = bhwave + 1
 	local birds = math.floor((bhwave - 1) / 3) + 1
 	for i = 1, birds do
 		local bird = { }
 		bird.x = math.floor(math.random() * 80)
-		bird.y = 70 + math.random() * 50 * birds
-		bird.speed = 2.5 + ((bhwave - 1) % 3) * 0.2 + math.random() * 0.3 + bhwave / 10
+		bird.y = 70 + math.random() * 85 * birds
+		bird.speed = 2.5 + ((bhwave - 1) % 3) * 0.2 + math.random() * 0.2 + bhwave * 0.03
 		bird.frame = math.floor(math.random() * 3) + 1
 		bhbirds[i] = bird
 	end
@@ -818,6 +832,12 @@ local function updateDeadBirdHunt()
 	end
 end
 
+local function updateGameOverBirdHunt()
+	if savedata.birdhunttopscore < bhscore then
+		savedata.birdhunttopscore = bhscore
+	end
+end
+
 local function drawPlayfieldBirdHunt()
 	if bhblackscreen then
 		clearScreen(colors.black)
@@ -855,6 +875,12 @@ local function drawPlayfieldBirdHunt()
 	end
 	if bhmode == 2 then
 		drawText(string.format("%01d", bhshots), 90, 10, img.font1, 4, 48, colors.gray)
+		drawText(string.format("%01d", bhlives), 8, 10, img.font1, 4, 48, colors.blue)
+	elseif bhmode == 4 then
+		drawText("GAME OVER", 30, 8, img.font2, 4, 65, (math.floor(bhstep / 5) % 2 == 0) and colors.black or colors.white)
+		drawText("SHOT   TOP", 25, 16, img.font2, 4, 65, colors.gray)
+		drawText(string.format("%04d", bhscore), 25, 23, img.font1, 4, 48, colors.gray)
+		drawText(string.format("%04d", savedata.birdhunttopscore), 60, 23, img.font1, 4, 48, colors.gray)
 	end
 	bhblackscreen = false
 	bhblackscreenboxx = false
@@ -868,6 +894,8 @@ local function updateBirdHunt()
 		updateGameBirdHunt()
 	elseif bhmode == 3 then
 		updateDeadBirdHunt()
+	elseif bhmode == 4 then	
+		updateGameOverBirdHunt()
 	end
 	drawPlayfieldBirdHunt()
 end
@@ -901,7 +929,81 @@ local function clickBirdHunt(x, y)
 		end
 		bhshots = bhshots - 1
 		bhblackscreen = true
+	elseif bhmode == 4 then
+		initBirdHunt()
+		bhmode = 1
 	end
+end
+
+-- Help
+
+local helpscroll = 0
+local helplines = {
+	"THREE GAME PAK"
+,	"BY CRAZEDPROGRAMMER"
+,	""
+,	"USE THE SCROLL WHEEL"
+,	"TO NAVIGATE"
+,	""
+,	"CONTROLS"
+,	""
+,	"GENERAL"
+,	""
+,	" DELETE"
+,	"  CLOSE THE PROGRAM"
+,	" BACKSPACE"
+,	"  RETURN TO MAIN"
+,	"  MENU"
+,	""
+,	"DR DAN"
+,	""
+,	" LEFT OR RIGHT ARROW"
+,	"  MOVE THE PILL LEFT"
+,	"  OR RIGHT"
+,	" SPACEBAR"
+,	"  SWAP THE COLOURS"
+,	"  OF THE PILL"
+,	" ANY KEY"
+,	"  WHEN YOU LOSE"
+,	"  RESTART THE GAME"
+,	""
+,	"STACKER DX"
+,	""
+,	" SPACEBAR"
+,	"  PLACE THE PLANE ON"
+,	"  TOP OF THE TOWER"
+,	" ANY KEY"
+,	"  WHEN YOU LOSE"
+,	"  RESTART THE GAME"
+,	""
+,	"BIRD HUNT"
+,	""
+,	" CLICK"
+,	"  SHOOT AT THE MOUSE"
+,	"  POSITION"
+,	"  IF YOU HIT A DUCK"
+,	"  YOU WILL SEE A"
+,	"  RED BOX"
+,	""
+,	" CLICK ANYWHERE"
+,	"  WHEN YOU LOSE"
+,	"  RESTART THE GAME"
+}
+local function updateHelp()
+	clearScreen(colors.gray)
+	for i = 0, 8 do
+		if helplines[i + helpscroll] then
+			drawText(helplines[i + helpscroll], 2, 1 + i * 6, img.font2, 4, 65, colors.white)
+		end
+	end
+end
+
+local function keyHelp(key)
+	
+end
+
+local function mouseScrollHelp(scroll)
+	helpscroll = helpscroll + scroll
 end
 
 -- Main Menu
@@ -915,13 +1017,13 @@ local function updateMainMenu()
 	drawImage(img.exit, 52, 51)
 	drawImage(img.drdan, 2, 21)
 	drawImage(img.stackerdx, 36, 21)
-	drawRect(colors.gray, 70, 21, 30, 33)
+	drawImage(img.birdhunt, 70, 21)
 end
 
 local function clickMainMenu(x, y)
 	if y >= 18 and y <= 19 then
 		if x >= 17 and x <= 25 then
-			error("help")
+			mode = 3
 		elseif x >= 27 and x <= 35 then
 			quit = true
 		end
@@ -947,6 +1049,8 @@ local function passTimer()
 		updateIntro()
 	elseif mode == 2 then
 		updateMainMenu()
+	elseif mode == 3 then
+		updateHelp()
 	elseif mode == 4 then
 		updateDrDan()
 	elseif mode == 5 then
@@ -959,8 +1063,12 @@ end
 local function passKey(key, hold)
 	if key == 211 then
 		quit = true
+	elseif key == 14 then
+		mode = 2
 	elseif mode == 1 then
 		keyIntro()
+	elseif mode == 3 then
+		keyHelp(key, hold)
 	elseif mode == 4 then
 		keyDrDan(key, hold)
 	elseif mode == 5 then
@@ -1045,6 +1153,8 @@ local function runProgram()
 			passKeyUp(e[2])
 		elseif e[1] == "mouse_click" then
 			passClick(e[2], e[3], e[4] + screenoffset)
+		elseif e[1] == "mouse_scroll" and mode == 3 then
+			mouseScrollHelp(e[2])
 		elseif e[1] == "terminate" then
 			quit = true
 		end
